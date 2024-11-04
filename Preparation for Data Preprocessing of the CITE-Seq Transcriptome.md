@@ -51,8 +51,40 @@ names(GEX_su)<-c("BF21", "BM27", "WF26", "WM34")
 ```
 Then each imported h5 matrix in the ```GEX_SU``` will be merged by;
 ```
-nobpcells.su<-merge(GEX_su[[1]], GEX_su[2:4])
+CD34.normal.su<-merge(GEX_su[[1]], GEX_su[2:4])
+CD34.normal.su
+An object of class Seurat 
+36900 features across 226301 samples within 2 assays 
+Active assay: RNA (36601 features, 3000 variable features)
+ 4 layers present: counts.CD34.1, counts.CD34.2, counts.CD34.3, counts.CD34.4
 ```
 In the SeuratV5 obj, these merged count matrix will be added as ```layers```.  
+```
+Formal class 'Assay5' [package "SeuratObject"] with 8 slots
+  ..@ layers    :List of 9
+  .. ..$ counts.BF12_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
+  .. ..$ counts.BM27_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
+  .. ..$ counts.WF26_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
+  .. ..$ counts.WM34_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
+```
+Overall, this Seurat object is **226301** total number of cells, and this should makes this Seurat object relatively large. However, the size of CD34.normal.su significantly samller than the typical Seurat object with these number of cells and genes.  
+```
+format(object.size(CD34.normal.su), units = "GB")
+[1] "0.8 Gb"
+```
+A magic here is the use of a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
+```
+BPCells is a package for high performance single cell analysis on RNA-seq and ATAC-seq datasets. It can analyze a 1.3M cell dataset with 2GB of RAM in under 10 minutes. This makes analysis of million-cell datasets practical on a laptop.
+
+BPCells provides:
+
+Efficient storage of single cell datasets via bitpacking compression
+Fast, disk-backed RNA-seq and ATAC-seq data processing powered by C++
+Downstream analysis such as marker genes, and clustering
+Interoperability with AnnData, 10x datasets, R sparse matrices, and GRanges
+Additionally, BPCells exposes its optimized data processing infrastructure for use in scaling 3rd party single cell tools (e.g. Seurat)
+```
+A Seurat web site has a tutorial showing how to deploy a BPCell matrix in their workflow (https://satijalab.org/seurat/articles/seurat5_bpcells_interaction_vignette).  Basically, BPCells
+
 
 
