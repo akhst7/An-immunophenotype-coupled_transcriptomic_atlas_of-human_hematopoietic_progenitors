@@ -88,7 +88,19 @@ A Seurat web site has a tutorial showing how to deploy a BPCell matrix in their 
 A following section describes how to utilize ```BPCells``` for the Seurat objects.
 
 ## Implementing BPCells in Seurat 
-For a multiple samples, the easiest way to incorporate BPCells matrix is to generate individual Surate objs with BPCell count matrix and merge them later.  In this example, there are 4 samples (there are total of  and  
+For a multiple samples, the easiest way to incorporate BPCells matrix is to generate individual Surate objs with BPCell count matrix and merge them later.  In this example, there are 4 samples (there are total of 13 samples) to be merged (they are all CD34+) and a follwoing code will do the job;
+```
+GEX<-lapply(1:4, function(x){
+dir=path[x]
+tmp<-Read10X_h5(dir)
+mat_raw <- tmp$`Gene Expression`
+write_matrix_dir(mat = mat_raw, dir = dirname[x], overwrite = T, compress = F)
+mat_bp<-open_matrix_dir(dir = dirname[x],buffer_size = 10000L)
+CreateSeuratObject(counts = mat_bp, project = dirname[x])
+  }
+)
+```
+Comparing to the Seurat objs with nonBPCells matrix above, there are two additional lines that actually implements BPCells.  One is ```write_matrix_dir(mat = mat_raw, dir = dirname[x], overwrite = T, compress = F)``` which will create an indisk ```Formal class 'MatrixSubset' [package "BPCells"]```, followed by ```mat_bp<-open_matrix_dir(dir = dirname[x],buffer_size = 10000L)``` to access the indesk memory just created. Then all needed to do is to merge all the files and this could be done by ```merge`` command as decreived above.  
 
 
 
