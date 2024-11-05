@@ -84,7 +84,13 @@ Downstream analysis such as marker genes, and clustering
 Interoperability with AnnData, 10x datasets, R sparse matrices, and GRanges
 Additionally, BPCells exposes its optimized data processing infrastructure for use in scaling 3rd party single cell tools (e.g. Seurat)
 ```
-A Seurat web site has a tutorial showing how to deploy a BPCell matrix in their workflow (https://satijalab.org/seurat/articles/seurat5_bpcells_interaction_vignette).  Basically, BPCells
+A Seurat web site has a tutorial showing how to deploy a BPCell matrix in their workflow (https://satijalab.org/seurat/articles/seurat5_bpcells_interaction_vignette).  Basically, BPCells allows to leave the large portion of data in the disk with **bitpacking compression**  rather than importing it to the RAM, thereby saving a memory space.  Bitpacking compression is written C++, which makes the computational process much faster.   ```BPCells``` is not compatible with a Bioconductor SingleCellExperiment platform, however there is a sister packages, ```BPCellsArray``` which works for the SingleCellExperiment objects.  
+A following section describes how to utilize ```BPCells``` for the Seurat objects.
+
+## Implementing BPCells in Seurat 
+For a multiple samples, the easiest way to incorporate BPCells matrix is to generate individual Surate objs with BPCell count matrix and merge them later.  In this example, there are 4 samples (there are total of  and  
+
+
 
 
 
