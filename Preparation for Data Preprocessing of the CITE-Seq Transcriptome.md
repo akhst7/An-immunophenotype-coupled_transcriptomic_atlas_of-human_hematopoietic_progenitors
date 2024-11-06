@@ -51,14 +51,9 @@ names(GEX_su)<-c("BF21", "BM27", "WF26", "WM34")
 ```
 Then each imported h5 matrix in the ```GEX_SU``` will be merged by;
 ```
-CD34.normal.su<-merge(GEX_su[[1]], GEX_su[2:4])
-CD34.normal.su
-An object of class Seurat 
-36900 features across 226301 samples within 2 assays 
-Active assay: RNA (36601 features, 3000 variable features)
- 4 layers present: counts.CD34.1, counts.CD34.2, counts.CD34.3, counts.CD34.4
+merge.su<-merge(GEX_su[[1]], GEX_su[2:4])
 ```
-In the SeuratV5 obj, these merged count matrix will be added as ```layers```.  
+In the SeuratV5 obj, these merged count matrix will be added as ```layers```, and in fact merge.su has 4 groups with over 6000 cells.  
 ```
 Formal class 'Assay5' [package "SeuratObject"] with 8 slots
   ..@ layers    :List of 9
@@ -66,13 +61,19 @@ Formal class 'Assay5' [package "SeuratObject"] with 8 slots
   .. ..$ counts.BM27_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
   .. ..$ counts.WF26_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
   .. ..$ counts.WM34_CD34:Formal class 'MatrixSubset' [package "BPCells"] with 7 slots
+
+> table(merge.su$group)
+
+ BF21  BM27  WF26  WM34 
+ 6622  8209 11698  8213 
+
 ```
-Overall, this Seurat object is **226301** total number of cells, and this should makes this Seurat object relatively large. However, the size of CD34.normal.su significantly samller than the typical Seurat object with these number of cells and genes.  
+Overall, this Seurat object is **34742** total number of cells, and this should makes this Seurat object relatively large. 
 ```
-format(object.size(CD34.normal.su), units = "GB")
-[1] "0.8 Gb"
+format(object.size(merge.su), units = "GB")
+[1] "5.1 Gb"
 ```
-A magic here is the use of a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
+Using R in the cloud, whether using an institutional HPC, Cloud services such as AWS with an ability to access a large amount of RAM, having large Seurat objects wont matter that much however, local computer with limited resources (e.g. CPU and RAM), will hit the momory limit rather quickly. The magic to get around this is to use a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
 ```
 BPCells is a package for high performance single cell analysis on RNA-seq and ATAC-seq datasets. It can analyze a 1.3M cell dataset with 2GB of RAM in under 10 minutes. This makes analysis of million-cell datasets practical on a laptop.
 
