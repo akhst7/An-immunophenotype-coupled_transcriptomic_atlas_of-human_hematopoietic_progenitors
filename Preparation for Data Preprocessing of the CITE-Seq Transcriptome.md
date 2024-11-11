@@ -1,4 +1,4 @@
-# Preparation for CITE-Seq and Single Cell Transcriptome Data Preprocessing
+# CITE-Seq and Single Cell Transcriptome Data Preprocessing
 ## Importing H5 Data and Creating a Seurat Objects
 
 The first thing first is to download a data set from a NCBI GEO data archive under ```GSE245108```.  All the count matrix including CITE-Seq and scRNAseq matrix are stored as a H5 format file.  
@@ -73,7 +73,7 @@ Overall, this Seurat object is **34742** total number of cells, and this should 
 format(object.size(merge.su), units = "GB")
 [1] "5.1 Gb"
 ```
-Using R in the cloud, whether using an institutional HPC, Cloud services such as AWS with an ability to access a large amount of RAM, having large Seurat objects wont matter that much however, local computer with limited resources (e.g. CPU and RAM), will hit the momory limit rather quickly. The magic to get around this is to use a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
+Ifusing R in the cloud, whether using an institutional HPC or Cloud services such as AWS  accessible with an a large amount of RAM, having large Seurat objects wont matter that much however, local computer with limited resources (e.g. CPU and RAM), will hit the momory limit rather quickly. The magic to get around this is to use a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
 ```
 BPCells is a package for high performance single cell analysis on RNA-seq and ATAC-seq datasets. It can analyze a 1.3M cell dataset with 2GB of RAM in under 10 minutes. This makes analysis of million-cell datasets practical on a laptop.
 
@@ -101,8 +101,9 @@ CreateSeuratObject(counts = mat_bp, project = dirname[x])
   }
 )
 ```
-Comparing to the Seurat objs with nonBPCells matrix above, there are two additional lines that actually implements BPCells.  One is ```write_matrix_dir(mat = mat_raw, dir = dirname[x], overwrite = T, compress = F)``` which will create an indisk ```Formal class 'MatrixSubset' [package "BPCells"]```, followed by ```mat_bp<-open_matrix_dir(dir = dirname[x],buffer_size = 10000L)``` to access the indesk memory just created. Then all needed to do is to merge all the files and this could be done by ```merge`` command as decreived above.  
+Comparing to the Seurat objs with nonBPCells matrix above, there are two additional lines that actually implements BPCells.  One is ```write_matrix_dir(mat = mat_raw, dir = dirname[x], overwrite = T, compress = F)``` which will create an indisk ```Formal class 'MatrixSubset' [package "BPCells"]```, followed by ```mat_bp<-open_matrix_dir(dir = dirname[x],buffer_size = 10000L)``` to access the indesk memory just created. Then all needed is to merge all the files and this could be done by ```merge`` command as decreived above.  
 
+One immediate change in Seurat obj created by incorporating the BPcell matrix is the count matrix is no longer a ```Matrix obj``` but ```MatrixSubset obj``` as noted above, and normal Seurat downstream pipeline can be applied 
 
 
 
