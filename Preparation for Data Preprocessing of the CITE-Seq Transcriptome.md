@@ -73,7 +73,7 @@ Overall, this Seurat object is **34742** total number of cells, and this should 
 format(object.size(merge.su), units = "GB")
 [1] "5.1 Gb"
 ```
-Ifusing R in the cloud, whether using an institutional HPC or Cloud services such as AWS  accessible with an a large amount of RAM, having large Seurat objects wont matter that much however, local computer with limited resources (e.g. CPU and RAM), will hit the momory limit rather quickly. The magic to get around this is to use a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
+If using R in the cloud, whether using an institutional HPC or Cloud services such as AWS  accessible with an a large amount of RAM, having large Seurat objects wont matter that much however, local computer with limited resources (e.g. CPU and RAM), will hit the momory limit rather quickly. The magic to get around this is to use a package, called ```BPCells``` (https://github.com/bnprks/BPCells).  A following is a short description of ```BPCells``` functions;
 ```
 BPCells is a package for high performance single cell analysis on RNA-seq and ATAC-seq datasets. It can analyze a 1.3M cell dataset with 2GB of RAM in under 10 minutes. This makes analysis of million-cell datasets practical on a laptop.
 
@@ -105,6 +105,10 @@ Comparing to the Seurat objs with nonBPCells matrix above, there are two additio
 
 One immediate change in Seurat obj created by incorporating the BPcell matrix is the count matrix is no longer a ```Matrix obj``` but ```MatrixSubset obj``` as noted above, and normal Seurat downstream pipeline can be applied 
 
-
+It is very simple to apply BPCells to the Seurat Objs with immediate benefits of having ```MatrixSubset objs```, most noticeably reduction in the file size ;
+```
+format(object.size(bp.merged.su), "GB")
+[1] "0.3 Gb"
+````
 
 
