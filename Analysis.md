@@ -88,6 +88,56 @@ table(sce2$scDblFinder.class, sce2$group)
   doublet   573   999  1239  1056
 ```
 From purely the computtional stand point, these cells should be removed however, these may truely be singles with some biological significance.  It is wise not always rely completely on the mathmatical and staistical outputs for making a decision.  The best is to create a analysis pipeline with or without removing these doublets and see how they differ. 
+But let's play with the singlet vs the doublet a bit longer before the next analysis step.  A follwing plot of the integrated UMAP from Seurat shows distribution  of the doublets.
+![Rplot](https://github.com/user-attachments/assets/d1bb0b7b-3f36-41ab-8541-ee1537dc336a)
+By looking at the cluster ditribution on the same UMAP, there are a few enriched doublets in the cluster 25 relative to other clusters.  
+![Rplot01](https://github.com/user-attachments/assets/fe6d3e47-ae85-4389-888f-c4df1105fd6a)
+This is more apparent by probing  a following ```scDblFinder.score``` plot. 
+![Rplot02](https://github.com/user-attachments/assets/7d0fa774-9baa-44c6-9fd3-a47525264af4)
+A dotpot of ```scDblFinder.score``` confirms this and also shows another cluster, 29 is also enriched with doublets. 
+![Rplot03](https://github.com/user-attachments/assets/c81dd838-1193-4de9-8bc3-4b29738792ad)
+Actual doublets counts among all the clusters indeed shows the cluster 25 has the most doublets.
+```
+    singlet doublet
+  1     1314     219
+  2     1331     192
+  3     1077     217
+  4     1175      50
+  5     1101     120
+  6     1130      88
+  7     1159      46
+  8     1080      78
+  9     1071      56
+  10    1039      84
+  11    1082      26
+  12     924     131
+  13     969      75
+  14     949      88
+  15     951      58
+  16     750     132
+  17     783      91
+  18     693     134
+  19     721      84
+  20     714      59
+  21     669      72
+  22     667      37
+  23     612      53
+  24     525     108
+  25     264     369
+  26     461     135
+  27     409      75
+  28     423      41
+  29     266     146
+  30     346      44
+  31     354       5
+  32     162      23
+  33     127      27
+  34      90      20
+  35      74       2
+```
+These does not quite help deciding whether all the doublets should be removed or any doublets could be saved.  One factor that might augment the decisiion potentially is a differential gene expression of the doublets against singlets.  This might reveal the cellular nature of the doublets, for example, if a large portion of top DGEs are MT origin or Ribosome associated genes, these cells should well be removed.  
+
+
 
 
 
