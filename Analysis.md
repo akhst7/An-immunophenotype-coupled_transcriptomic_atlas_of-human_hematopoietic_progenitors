@@ -135,7 +135,35 @@ Actual doublets counts among all the clusters indeed shows the cluster 25 has th
   34      90      20
   35      74       2
 ```
-These does not quite help deciding whether all the doublets should be removed or any doublets could be saved.  One factor that might augment the decisiion potentially is a differential gene expression of the doublets against singlets.  This might reveal the cellular nature of the doublets, for example, if a large portion of top DGEs are MT origin or Ribosome associated genes, these cells should well be removed.  
+These does not quite help deciding whether all the doublets should be removed or any doublets could be saved.  One factor that might augment the decisiion potentially is a differential gene expression of the doublets against singlets.  This might reveal the cellular nature of the doublets, for example, if a large portion of top DGEs are MT origin or Ribosome associated genes, these cells should well be removed.  DGEs of doublets relative to singles could be easily done in ```Seurat```;
+```
+FindMarkers(j, ident.1 = doublet.name, assay = "RNA", logfc.threashold=0.5, test.use="wilcox", group.by = "group") %>% as.data.table(., keep.rowname=T) ->de.dt
+
+de.dt
+Index: <rn>
+          rn         p_val avg_log2FC pct.1 pct.2     p_val_adj
+      <char>         <num>      <num> <num> <num>         <num>
+   1:   NAV1 2.803049e-175  0.2359848 0.486 0.220 1.025944e-170
+   2:   PSD3 4.363296e-165 -0.1520466 0.544 0.272 1.597010e-160
+   3: CDC25B 2.607588e-154  0.7004048 0.331 0.134 9.544034e-150
+   4:  SPNS2 2.219335e-147  0.4199353 0.524 0.256 8.122989e-143
+   5:   ASPM 2.538348e-146  0.6093897 0.461 0.228 9.290608e-142
+  ---                                                          
+8839: PTP4A2  8.662836e-01 -0.1119596 0.994 0.915  1.000000e+00
+8840: NDFIP2  9.046675e-01 -1.5299037 0.018 0.018  1.000000e+00
+8841: ATP5ME  9.213388e-01 -0.1384415 0.957 0.808  1.000000e+00
+8842:   HBA2  9.709345e-01 -2.3858844 0.012 0.012  1.000000e+00
+8843: RNASEK  9.772033e-01 -0.1158481 0.992 0.906  1.000000e+00
+```
+A total of almost 9000 DEGs !!  A volcano plot shows a majority of DGEs are low hanging fruits but top up and down regulated genes do not appear to be related to the apoptosis and no ribosome or mitochondria associated genes are found in this list of DEGs. Typically, low quality cells have hihg expressions of either or both ribosome and mitochondrial genes.  
+
+![Rplot01](https://github.com/user-attachments/assets/ce793d67-d74d-4857-a310-95e2f1345228)
+
+One last thing that might help assertain potential **phenotypes** is to perform functional profiling of this DEG set.  The quickest way to do this is to run a gGOSt analysis pipeline in the g:Profiler web site (https://biit.cs.ut.ee/gprofiler/gost).  I feed 250 DEGs ranked by p_val_adj (usually, the larger the better) and obtained a folloing output; 
+![gProfiler_hsapiens_2024-11-21_01-25-31](https://github.com/user-attachments/assets/8dcd144c-83c5-4a28-b8cb-49a5c7f6613e)
+ These compelling lines of analyses strongly suggest that these cells may not be junky doublets, thought it is possible that those with extremely high RNA counts are indeed in the cycle and depending on where in the cycle, they may well be a doublet of progenitors.  At this point, these cells will be kept and included for the rest of downstream analysis.   Of note, Authors of this manuscirpt did not appear to run the doubelt discrimination.  
+ 
+
 
 
 
