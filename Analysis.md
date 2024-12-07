@@ -161,9 +161,10 @@ A total of almost 9000 DEGs !!  A volcano plot shows a majority of DGEs are low 
 
 One last thing that might help assertain potential **phenotypes** is to perform functional profiling of this DEG set.  The quickest way to do this is to run a gGOSt analysis pipeline in the g:Profiler web site (https://biit.cs.ut.ee/gprofiler/gost).  I feed 250 DEGs ranked by p_val_adj (usually, the larger the better) and obtained a folloing output; 
 ![gProfiler_hsapiens_2024-11-21_01-25-31](https://github.com/user-attachments/assets/8dcd144c-83c5-4a28-b8cb-49a5c7f6613e)
- These compelling lines of analyses strongly suggest that these cells may not be junky doublets, thought it is possible that those with extremely high RNA counts are indeed in the cycle and depending on where in the cycle, they may well be a doublet of progenitors.  At this point, these cells will be kept and included for the rest of downstream analysis.   Of note, Authors of this manuscirpt did not appear to run the doubelt discrimination.  
+ These compelling lines of analyses strongly suggest that these cells may not be junky doublets, though it is possible that those with extremely high RNA counts are indeed in the cycle and depending on where in the cycle, they may well be a doublet of progenitors.  At this point, these cells will be kept and included for the rest of downstream analysis.   Of note, Authors of this manuscirpt did not appear to run the doubelt discrimination.  
  
 ## Analysis Step 2 -- Annotation
+
 
 
 
