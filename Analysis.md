@@ -165,6 +165,8 @@ One last thing that might help assertain potential **phenotypes** is to perform 
  
 ## Analysis Step 2 -- Annotation
 
+Annotation is doen already by authors. In fact they really went distance with pain-staking steps to generate cell annotation though multiple statistical corrections including a ML step using XGboost, in order to nullify inconsistencies arised due to batch and integrative effects.  This whole process identified 89 distinct subsets in their combined samples, a total of 13 samples,  including titration controls.  Amount of the statistical scrunity is overwhelming and exhaustive. I am sure some of the reviwers asked them to run some of those statistical analysis, and there is no doubt about its completeness however, one bothersome question remaining for me is whether they went too far with this.  To publish a paper in Nature Med requires responses to extremely regorous questions from reviwers, and their extreme and rigrous staistical steps may be a testimony to that.  I can attest this from my experience dealing with a peer review process in Science. One reviewer had over 40 questions, which were extremely difficult to address.  Perhaps, this reviewer was purposely attempting to delay our acceptance  of our manuscript for his or her personal gain. Who knows.  
+Gettig back to the cell annotation, I dont really have to run anything as mentioned. The cell annotation is provided by them, and all I have to do is to match UIDs in the cell annotation file to those of the transcriptome data in the Suerat format.  
 
 
 
