@@ -168,6 +168,108 @@ One last thing that might help assertain potential **phenotypes** is to perform 
 Annotation is doen already by authors. In fact they really went distance with pain-staking steps to generate cell annotation though multiple statistical corrections including a ML step using XGboost, in order to nullify inconsistencies arised due to batch and integrative effects.  This whole process identified 89 distinct subsets in their combined samples, a total of 13 samples,  including titration controls.  Amount of the statistical scrunity is overwhelming and exhaustive. I am sure some of the reviwers asked them to run some of those statistical analysis, and there is no doubt about its completeness however, one bothersome question remaining for me is whether they went too far with this.  To publish a paper in Nature Med requires responses to extremely regorous questions from reviwers, and their extreme and rigrous staistical steps may be a testimony to that.  I can attest this from my experience dealing with a peer review process in Science. One reviewer had over 40 questions, which were extremely difficult to address.  Perhaps, this reviewer was purposely attempting to delay our acceptance  of our manuscript for his or her personal gain. Who knows.  
 Gettig back to the cell annotation, I dont really have to run anything special to get annotation done. The cell annotation provided by them should be good and if so,  all I have to do is to match UIDs in the cell annotation file to those of the transcriptome data in the Suerat format.  
 
+The first thing to do is to import their cell annotation file (in Excel worksheet) into R as follows;
+```cellanno<-fread("../An immunophenotype-coupled_transcriptomic_atlas_of human_hematopoietic_progenitors/GSE245108/GSE245108_Level3M-titrated-cell-annotation.txt", header = T)```
+Their cell annotation file redises in a combined Excel sheet, ```GSE245108_Level3M-titrated-cell-annotation.txt```  found under ```GSE245108```, and this is exported as a csv file.  Again I use the ```data.table``` pacakge, and ```fread``` is from ```data.table``` to import the csv file into R.  
+```
+cellanno[, 1:5] %>% print(., topn = 10 )
+                                                                           UID Level1 Level2          Level3R          Level3M
+                                     <char> <char> <char>           <char>           <char>
+    1:  GGGTGAATCCGAGATT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    2:  CACGTTCGTGTATTGC-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    3:  TATATCCTCGGTATGT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    4:  GCGATCGCAGACAATA-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    5:  TGCATCCCAGGAGGTT-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    6:  TGCAGATGTCCGGACT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    7:  TTCTAGTTCGTAATGC-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    8:  CTTTCGGTCCAATCTT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+    9:  CTACATTCAGCGAGTA-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+   10:  GTTACCCTCAAACGAA-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1
+   ---                                                                                     
+72170: GTAGGTTGTTCGTTCC-1.WM34_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72171: TCATCCGAGGAAGTAG-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72172: TCTGGCTAGTCTGGTT-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72173: GCATGATTCGGTAGGA-1.WM34_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72174: CAACCAAAGTCATGCT-1.BM27_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72175: AGGGCCTAGCATGGGT-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72176: GACAGCCGTACCAGAG-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72177: TGGGCGTTCTCGAACA-1.BM27_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72178: AGGACTTAGTGGTGAC-1.WF26_031423_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+72179: TCCACGTAGGTCTACT-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular
+```
+As seen in the content of this cell annotation file, there are **72179 cells** registered and annotated. The file contains cells, not only from CD34 sorted  but also CD271 sorted cells.  In human, CD34+ cells represent hematopoietic stem cells and some progenitors while CD271+ cells represent bone marrow mesenchymal stroma cells (cells supporting hematopoiesis).  In cleaned and filtered ```CD34 Seurate file```, there are total of **28647 cells**, whereas there are **28721 cells** in the ```cellanno```.  Discrepancy is simple due to the fact that my filteration approach removed more cells than authors did for publication.  At any rate, differnece is very small and the numbers are real close.  
+For downsream steps, a few additiobnal columns were created to make a life bit easier. 
+```GroupID and CellID``` columns are created by followig;
+```
+cellanno[, c("CellID","GroupID") :=tstrsplit(cellanno$UID, ".", fixed=T, keep=c(1,2))]
+```
+Moreover, a ```Group``` column is created;
+```
+pattern <- "(?<=\\w.\\d.)(_\\d+_)" # perl=TRUE
+cellanno[, Group:=str_replace_all(cellanno$GroupID, pattern = pattern, replacement = "-")]
+```
+
+```
+                             UID             Level1 Level2          Level3R          Level3M       CellID           GroupID          GroupID.mod  Group
+                                     <char> <char> <char>           <char>           <char>             <char>            <char>      <char>     <char>
+    1:  GGGTGAATCCGAGATT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1 GGGTGAATCCGAGATT-1  WM34_120522_CD34        WM34  WM34-CD34
+    2:  CACGTTCGTGTATTGC-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1 CACGTTCGTGTATTGC-1  BM27_120522_CD34        BM27  BM27-CD34
+    3:  TATATCCTCGGTATGT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1 TATATCCTCGGTATGT-1  WM34_120522_CD34        WM34  WM34-CD34
+    4:  GCGATCGCAGACAATA-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1 GCGATCGCAGACAATA-1  WM34_120522_CD34        WM34  WM34-CD34
+    5:  TGCATCCCAGGAGGTT-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1 TGCATCCCAGGAGGTT-1  BM27_120522_CD34        BM27  BM27-CD34
+    6:  TGCAGATGTCCGGACT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1 TGCAGATGTCCGGACT-1  WM34_120522_CD34        WM34  WM34-CD34
+    7:  TTCTAGTTCGTAATGC-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1 TTCTAGTTCGTAATGC-1  WM34_120522_CD34        WM34  WM34-CD34
+    8:  CTTTCGGTCCAATCTT-1.WM34_120522_CD34   HSPC    HSC            HSC-1            HSC-1 CTTTCGGTCCAATCTT-1  WM34_120522_CD34        WM34  WM34-CD34
+    9:  CTACATTCAGCGAGTA-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1 CTACATTCAGCGAGTA-1  BM27_120522_CD34        BM27  BM27-CD34
+   10:  GTTACCCTCAAACGAA-1.BM27_120522_CD34   HSPC    HSC            HSC-1            HSC-1 GTTACCCTCAAACGAA-1  BM27_120522_CD34        BM27  BM27-CD34
+   ---                                                                                                                                                 
+72170: GTAGGTTGTTCGTTCC-1.WM34_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular GTAGGTTGTTCGTTCC-1 WM34_120522_CD271        WM34 WM34-CD271
+72171: TCATCCGAGGAAGTAG-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular TCATCCGAGGAAGTAG-1 BF21_032123_CD271        BF21 BF21-CD271
+72172: TCTGGCTAGTCTGGTT-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular TCTGGCTAGTCTGGTT-1 BF21_032123_CD271        BF21 BF21-CD271
+72173: GCATGATTCGGTAGGA-1.WM34_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular GCATGATTCGGTAGGA-1 WM34_120522_CD271        WM34 WM34-CD271
+72174: CAACCAAAGTCATGCT-1.BM27_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular CAACCAAAGTCATGCT-1 BM27_120522_CD271        BM27 BM27-CD271
+72175: AGGGCCTAGCATGGGT-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular AGGGCCTAGCATGGGT-1 BF21_032123_CD271        BF21 BF21-CD271
+72176: GACAGCCGTACCAGAG-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular GACAGCCGTACCAGAG-1 BF21_032123_CD271        BF21 BF21-CD271
+72177: TGGGCGTTCTCGAACA-1.BM27_120522_CD271 Stroma Stroma Stromal Vascular Stromal Vascular TGGGCGTTCTCGAACA-1 BM27_120522_CD271        BM27 BM27-CD271
+72178: AGGACTTAGTGGTGAC-1.WF26_031423_CD271 Stroma Stroma Stromal Vascular Stromal Vascular AGGACTTAGTGGTGAC-1 WF26_031423_CD271        WF26 WF26-CD271
+72179: TCCACGTAGGTCTACT-1.BF21_032123_CD271 Stroma Stroma Stromal Vascular Stromal Vascular TCCACGTAGGTCTACT-1 BF21_032123_CD271        BF21 BF21-CD271
+```
+One another column must be created to make UIDs of cellanno compatible with UIDs of CD34+ Seurat file, which have an extra cell ID tags at the end of UIDs (because there are some duplicarted UIDs among samples), for example, the Seurat UID may have suffix, "_1" or other sequencial number depending on the number of distict samples.  In the case of CD34+ Seurat, there are four different samples and UIDs of each samples have the suffix of "_1" to "_4".  To add these suffix that correspond and match ones in CD34+ Seurat, a following will do the job;
+```
+cellanno[grep("WM34_", GroupID), CellID.mod :=str_c(CellID, "_4")]
+cellanno[grep("WF26_", GroupID), CellID.mod :=str_c(CellID, "_3")]
+cellanno[grep("BM27_", GroupID), CellID.mod :=str_c(CellID, "_2")]
+cellanno[grep("BF21_", GroupID), CellID.mod :=str_c(CellID, "_1")]
+```
+Rather than typing 4 lines, using either ```lapply``` or ```for loop``` will make an one liner which is probably better since it will less likely introduce typo.  Anyhow, once this table is complete and a next thing to do is to match barcodes between the cellanno file and the CD34+ Seurat file as follows;
+```
+cellanno[grep("_CD34", GroupID), CellID.mod] %>% intersect(colnames(bp.noMT.su) ,.) ->shared.barcode
+```
+Then, subset CD34+ Seurat according to the ```shared barcode```;
+```
+bp.noMT.AnnoMatched.su<-merge.su[, shared.name]
+```
+Then, all needed to do is to run the Seurat's routine **dimensioal reduction** and **batch integration**. 
+```
+> bp.noMT.AnnoMatched.su
+An object of class Seurat 
+62804 features across 28647 samples within 3 assays 
+Active assay: RNA (36601 features, 3000 variable features)
+ 9 layers present: counts.BF12_CD34, counts.BM27_CD34, counts.WF26_CD34, counts.WM34_CD34, data.BF12_CD34, data.BM27_CD34, data.WF26_CD34, data.WM34_CD34, scale.data
+ 2 other assays present: SCT, ADT
+ 4 dimensional reductions calculated: pca, SCT.PCA, SCT.harmony, SCT_harmony.umap
+```
+One last thing before completing the cell annotation step is to actually add the annotaion.  There are multiple levels of annotation but the most important/relevant ones are ***"Level3R"*** and ***"Level3M"***.  ***Level3R*** is the annotation based on the trascriptome data whereas ***Level3M** is based on both transcritome and ADC data.  Which is more accurate and precise ?   The biggest advantage of the current study is the fact that they run ADC targeting over 200 phenotypic markers to back up the transcriptome data, which is unprecedented.  It must cost them tremendous amount money and effort.   
+Anyhow, follwing lines shows how to safely add annotations into the Seurat file as meta data;
+```
+cellanno[grep("_CD34", GroupID),][CellID.mod %in% shared.name, Level3M] -> level3M
+names(level3M)<- cellanno[grep("_CD34", GroupID),][CellID.mod %in% shared.name, CellID.mod]
+hp.noMT.AnnoMatched.su<-AddMetaData(hp.noMT.AnnoMatched.su, metadata = level3M, col.name = "Level3M")
+```
+
+ 
+
+
 
 
 
