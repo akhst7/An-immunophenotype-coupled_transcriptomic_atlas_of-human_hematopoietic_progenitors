@@ -52,6 +52,24 @@ m.su.noMT<-FindNeighbors(m.su.noMT, reduction = "SCT1.harmony", assay = "SCT1", 
 m.su.noMT<-FindClusters(m.su.noMT, graph.name = "SCT_Harmony_snn", resolution = 6, algorithm = 4, cluster.name = "SCT_Harmony.snn.res6", method = "igraph")
 ```
 I have to make a one comment on the last line begins with ```FindClusters```.  According to the paper, they identified **89** clusters which.  A argument/parameter of ```FindClusters``` that controls the cluster number is ```resolution```.  To get close to their number, I experimented with values of ```resulution```. 7 and 8 give over a hundred clusters while 6 yields 86.  I guess authors did not simply use a ```FindClusters`` function to derive the optimum number of clusters (86) but they also relied on the cell identifcation from the ADT assay to finally determine the cluster number. I will use **89 clusters** for now but trying to see how significant the differences are later. 
-
+The next step, creating UMAP, is a bit tricky as the way I do.  Seurat could generate acceptable UMAP but quite often, shapes and distribution of points are not well separatable.  Seurate uses a R packages, ```uwot``` to generate UMAP with its default configuration (and Seurat's minor modifications). As with any R pacakges, ```uwot``` is customizable.   A real issue with custormerization, particularly with ```uwot``` is the fact that several parameters can control an ouput of the projection must be tweaked to generate an optimized projection but what is an the optimezed projection?  Interestingly, this has to be done by our own eyes.  Luckily, it is not necessaray to adjust every parameters but two parameters, ```a``` and ```b```.  I created a following function to test a range of values for ```a``` and ```b```.  
+```
+CreateSeuratUMAP<-function(suobj, reduction, a, b, neighbor, scale){
+  tempfile(pattern = "model",tmpdir=tempdir(),fileext = ".uwot")->uwot_temp
+  obj<-Embeddings(suobj,reduction = reduction)
+  umap.obj<-umap2(obj, nn_method = "nndescent", n_threads = 19, a=a, b=b, fast_sgd = T, seed = 12345, ret_model = TRUE, n_neighbors = neighbor, n_components = 3, scale = scale)
+  save_uwot(umap.obj, file = uwot_temp, unload = F)
+  dt<-as.data.table(umap.obj$embedding)
+  ggplot(dt,aes(V1, V2))+geom_point(alpha=0.5, shape=21)
+  }
+```
+An example of the usage is as follows;
+```
+CreateSeuratUMAP(m.su.noMT, reduction = "SCT1.harmony", a = 0.9, b = 1, neighbor = 15, scale = "Z")
+```
+This function saves UMAP with particular values of ```a``` and ```b``` (```uwot_temp```) and draws a UMAP plot (by ggplot2).  Once the values of  ```a``` and ```b``` are found, they can be included in the Seurat obj as a ReducedDim obj, as follows;
+```
+m.su.noMT[["SCT1.UMAP"]]<-CreateDimReducObject(embeddings = model$embedding, assay = "SCT1", key = "SCT1UMAP_")
+```
 
 
