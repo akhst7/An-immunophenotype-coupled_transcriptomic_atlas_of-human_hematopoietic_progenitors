@@ -193,7 +193,9 @@ STAR --genomeDir $index \
 --outSAMattributes NH HI CR CB CY UR UY sM \
 --outSAMtype BAM SortedByCoordinate
 ```
-
+STARSolo creates many ouputs but the most important and relevant files are in a ```xxxSolo.out/Velocyte/Filtered``` folder.  
+![Screenshot 2025-01-21 at 3 03 59 PM](https://github.com/user-attachments/assets/548d0ed9-8d8b-495c-bed3-d9faea40f090)
+All the files necessary to create either a ```Seurat``` or ```Scanpy/Scvelo```,  including count, barcode and cell files are in this folder.   
 
 ## Establishing the scRNAseq Cell Annotation Ref for the Human Hematopoietic Tissue
 
