@@ -149,7 +149,7 @@ parallel -j 20 -vv 'gsed -i "s/^\+.*/+/g" {}' ::: *.fastq
 parallel -j 20 -vv 'gsed -i "2~4 s/\(^.\{28\}\)\(.\{73\}\)/\1/" {}' ::: *_1.fastq
 parallel -j 20 -vv 'gsed -i "4~4 s/\(^.\{28\}\)\(.\{73\}\)/\1/" {}' ::: *_1.fastq
 parallel -j 20 -vv 'gsed -i "s/length=101/length=28/g" {}' ::: *_1.fastq
-parallel -j 20 -vv --bar 'pigz --fast -p20 -v {}' ::: *.* # STARsolo prefers gz files.
+parallel -j 20 -vv --bar 'pigz --fast -p20 -v {}' ::: *.* # STARsolo prefers gz files but I may be wrong about this one. 
 ```
 Once a correct version of R1 and R2 are created, STARsolo can be run as follows; 
 ```
