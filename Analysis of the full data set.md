@@ -195,7 +195,12 @@ STAR --genomeDir $index \
 ```
 STARSolo creates many ouputs but the most important and relevant files are in a ```xxxSolo.out/Velocyte/Filtered``` folder.  
 ![Screenshot 2025-01-21 at 3 03 59 PM](https://github.com/user-attachments/assets/548d0ed9-8d8b-495c-bed3-d9faea40f090)
-All the files necessary to create either a ```Seurat``` or ```Scanpy/Scvelo```,  including count, barcode and cell files are in this folder.   
+
+All the files necessary to create either a ```Seurat``` or ```Scanpy/Scvelo```,  including count, barcode and cell files are in this folder.   Notably, showen here is an example using fastqs from the one sample,  BF21_CD34.  For entirey, fastqs from all the samples are needed to be realigned to get spliced vs unspecified counts, and this requires enormous computing power and resources which even with my MacStudio it will be difficult, although my MacStudio with M1Ultra takes only 20min to complete STARSolo run, suggesting it would only take a day to finish realigning all the samples.  My issues is not so much of the lack of computing power but data storage.  My system is short of the memory space enough to host all the Solo ouputs.  
+
+One might argue that rather than realigning fastqs from the individual sample, which requires multiple Solo runs,  concatenating all the fastqs and run Solo in a single run. However, an issue of doing this is that some of the same barcodes were used repeatedly in several samples thereby, fastqs with the same bar code yet from different samples will be counted as the same.  The only way this woud work is if @RG has the SM (group) which can be used to distinguish samples in BAM files.  
+
+Actual sequence of the RNA velocity analysis will be covered in another more dedicated git page for the RNA velometry and psuedotime analysis. 
 
 ## Establishing the scRNAseq Cell Annotation Ref for the Human Hematopoietic Tissue
 
