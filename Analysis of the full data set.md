@@ -216,6 +216,68 @@ as(johined@layers$counts, "dgCMatrix")-> m
 There is one another step needed prior to assembling a ```SingleCellExperiment``` obj, that is to transfer meta data from the ```Seurat``` to ```SingleCellExperiment``` obj.  ```SingleCellExperiment``` does not accept a typiecal dataframe but ```DataFrame``` by ```S4Vector```.  
 ```
 DF<-DataFrame(m.su.noMT[[]])
+sce<-SingleCellExperiment(list(counts=m), colData=DF)
+
+> sce
+class: SingleCellExperiment 
+dim: 36601 67889 
+metadata(0):
+assays(1): counts
+rownames(36601): MIR1302-2HG FAM138A ... AC007325.4 AC007325.2
+rowData names(0):
+colnames(67889): AAACCCAAGGCCCACT-1_1 AAACCCACAAGAGCTG-1_1 ... TTTGTTGTCAGGACAG-1_8 TTTGTTGTCGGCACTG-1_8
+colData names(13): orig.ident nCount_RNA ... Level3M Level3R
+reducedDimNames(0):
+mainExpName: NULL
+altExpNames(0):
+
+> colData(sce)
+DataFrame with 67889 rows and 13 columns
+                             orig.ident nCount_RNA nFeature_RNA percentMT percentRB nCount_SCT1 nFeature_SCT1 SCT_Harmony.snn.res8 seurat_clusters
+                            <character>  <numeric>    <numeric> <numeric> <numeric>   <numeric>     <integer>             <factor>        <factor>
+AAACCCAAGGCCCACT-1_1 BPCells/BF21-CD271       4877         2288   4.44946   13.1843       11280          2679                   24              37
+AAACCCACAAGAGCTG-1_1 BPCells/BF21-CD271      11472         3720   3.52162   22.1409       12095          3717                   71              68
+AAACCCACAATACCTG-1_1 BPCells/BF21-CD271       8030         2599   6.77460   30.8095       11988          2605                   2               2 
+AAACCCACAATGACCT-1_1 BPCells/BF21-CD271       4657         1866   5.06764   22.8688       11566          2451                   53              61
+AAACCCACATATGAAG-1_1 BPCells/BF21-CD271       7923         2629   2.90294   33.6994       11964          2644                   32              22
+...                                 ...        ...          ...       ...       ...         ...           ...                  ...             ...
+TTTGTTGAGATAGCAT-1_8  BPCells/WM34-CD34      25079         5037   3.44511   38.4425       26305          5036                  3                7 
+TTTGTTGAGTCTCGTA-1_8  BPCells/WM34-CD34      51039         7424   3.79514   26.8324       27906          6564                  100              3 
+TTTGTTGCATTATGCG-1_8  BPCells/WM34-CD34      31558         5500   1.49249   38.0918       27824          5500                  86               14
+TTTGTTGTCAGGACAG-1_8  BPCells/WM34-CD34      25834         4978   2.57413   36.8700       26468          4977                  86               14
+TTTGTTGTCGGCACTG-1_8  BPCells/WM34-CD34       4409         1827   2.44954   19.4829       25060          4735                  35               48
+                     SCT_Harmony.snn.res7 SCT_Harmony.snn.res6        Level3M      Level3R
+                                 <factor>             <factor>    <character>  <character>
+AAACCCAAGGCCCACT-1_1                   31                   37         BMCP-1         BMCP
+AAACCCACAAGAGCTG-1_1                   69                   68             NA           NA
+AAACCCACAATACCTG-1_1                   11                   2              NA           NA
+AAACCCACAATGACCT-1_1                   55                   61             NA           NA
+AAACCCACATATGAAG-1_1                   33                   22             NA           NA
+...                                   ...                  ...            ...          ...
+TTTGTTGAGATAGCAT-1_8                   2                    7           HSC-1        HSC-1
+TTTGTTGAGTCTCGTA-1_8                   94                   3  MultiLin-GMP-2 MultiLin-GMP
+TTTGTTGCATTATGCG-1_8                   60                   14       immNeu-1       immNeu
+TTTGTTGTCAGGACAG-1_8                   60                   14             NA           NA
+TTTGTTGTCGGCACTG-1_8                   80                   48        Pro-B-2      Pro-B-2
+```
+One of the improvements of ```SingleR``` implemented by LT allows ```SingleR``` to run parallelley by utilizing a ```BiocParallel``` package.  To take advantage of this, an parallel instruction in the form of ```BiocParallel``` object needs to be created;
+```
+library(BiocParallel)
+MulticoreParam(18, RNGseed = 1234, progressbar = T)-> bp
+
+> bp
+class: MulticoreParam
+  bpisup: FALSE; bpnworkers: 18; bptasks: 2147483647; bpjobname: BPJOB
+  bplog: FALSE; bpthreshold: INFO; bpstopOnError: TRUE
+  bpRNGseed: 1234; bptimeout: NA; bpprogressbar: TRUE
+  bpexportglobals: TRUE; bpexportvariables: FALSE; bpforceGC: FALSE
+  bpfallback: TRUE
+  bplogdir: NA
+  bpresultdir: NA
+  cluster type: FORK
+```
+Now, 
+
 
 
 
