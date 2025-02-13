@@ -110,5 +110,6 @@ It is very simple to apply BPCells to the Seurat Objs with immediate benefits of
 format(object.size(bp.merged.su), "GB")
 [1] "0.3 Gb"
 ````
-
+## Update on using BPCells
+After playing with BPCells for a while, I decided to stop using BPCells for several reasons.  The most significant one that really bothered me was the lack of interoperability.  BPCells creates a marix, ```IterableMatrix object with class ColBindMatrices``` and this is not compatible  with other R and Python packages simply because they dont accept it.  Converting Seurat into SingleCellExperiment obj, for example, reuqires trasformation of ```IterableMatrix object with class ColBindMatrices``` into ```dgCMatrix```, and this poses some issues with current R, Rstuido and Positron (4.2.2), by giving an ***erros*** upon transposion of ```IterableMatrix object``` for some reasons that I have not figured out yet. Also, AnnData in Python will not accept this and I have to convert it to ```dgCMatrix``` or more preferably ```dgRMatrix```.  Instread of BPCells and having an headache and grave frustration with this, I decided to stick with ```Seurat's sketch```.   
 
