@@ -205,6 +205,8 @@ One might argue that rather than realigning fastqs from the individual sample, w
 Actual sequence of the RNA velocity analysis will be covered in another more dedicated git page for the RNA velometry and psuedotime analysis. 
 
 ## Establishing the scRNAseq Cell Annotation Ref for the Human Hematopoietic Tissue
+This dataset comes with cell annotations based on the ADT(CITE-Seq) and transcriptomic data, then why further cell annotation step is necessary? It turns out that only **11992** cells out of 67889 (in this example buy a lot more in the actual published data) are annotated.  These unannotated cells could be annotated by using annotated 67889 cell as a training set for annotating the test set, 11992 unannotated cells.  This actually gives a great opportunity to test how well an annotation algorithm performs.  
+
 There are many R as well as Python packages that can create farily precise and accurate cell annotations.  More recent ones take advantage of ML and AI (e.g. ChatGPT) algorithm for feature selection, a feature in this case is cell annotation/type, while more established ones typically use the simpler approach and they work just as well as ones with ML and AI.  I use a R package called, ```SingleR```.  Since the original version, (https://www.nature.com/articles/s41590-018-0276-y) was published back in 2019,  several improvements by a current maintainer, Aaron Lun have been added.  ```SingleR``` depends on ```SummerizedExperiment```, thus needs ```SingleCellExperiment``` format, and therefore, the count matrix in the ```Seurat``` has to be imported to the ```SingleCellExperiment``` obj.  Since ```SingleCellExperiment``` does not accept the ```IterableMatrix``` count matrix in the ```Seurat``` obj, it has to be converted first to ```dgCMatrix```.  Also, ```SingleCellExperiment``` does not accept **layered data** as in ```Seurat V5``` obj, and these layered matrix must be joined to form a single count matrix.  
 ```
 joined<-JoinLayers(m.su.noMT)
@@ -260,7 +262,7 @@ TTTGTTGCATTATGCG-1_8                   60                   14       immNeu-1   
 TTTGTTGTCAGGACAG-1_8                   60                   14             NA           NA
 TTTGTTGTCGGCACTG-1_8                   80                   48        Pro-B-2      Pro-B-2
 ```
-One of the improvements of ```SingleR``` implemented by LT allows ```SingleR``` to run parallelley by utilizing a ```BiocParallel``` package.  To take advantage of this, an parallel instruction in the form of ```BiocParallel``` object needs to be created;
+One of the improvements of ```SingleR``` implemented by LT allows ```SingleR``` to run parallelley by utilizing a ```BiocParallel``` package.  To take advantage of this to speed things up, an parallel instruction in the form of ```BiocParallel``` object needs to be created;
 ```
 library(BiocParallel)
 MulticoreParam(18, RNGseed = 1234, progressbar = T)-> bp
@@ -276,7 +278,7 @@ class: MulticoreParam
   bpresultdir: NA
   cluster type: FORK
 ```
-Now, 
+
 
 
 
