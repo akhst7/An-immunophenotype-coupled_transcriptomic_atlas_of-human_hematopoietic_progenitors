@@ -278,6 +278,30 @@ class: MulticoreParam
   bpresultdir: NA
   cluster type: FORK
 ```
+The last step, prior to running ```SingleR```, is remove ```NA``` from a ```Level3M``` ref column of the colData.  
+```
+sce.new.Nona<-sce[, !is.na(sce$Level3M)]
+
+> sce.new.noNa
+class: SingleCellExperiment 
+dim: 36601 55897 
+metadata(0):
+assays(2): counts logcounts
+rownames(36601): MIR1302-2HG FAM138A ... AC007325.4 AC007325.2
+rowData names(0):
+colnames(55897): AAACCCAAGGCCCACT-1_1 AAACCCAGTAACGCGA-1_1 ... TTTGTTGCATTATGCG-1_8 TTTGTTGTCGGCACTG-1_8
+colData names(14): orig.ident nCount_RNA ... Level3R sizeFactor
+reducedDimNames(0):
+mainExpName: NULL
+altExpNames(0):
+
+> is.na(sce.new.noNa$Level3M) %>% sum()
+[1] 0
+```
+Now, ```sce.new.Nona``` can be used as a cell annotation ref in the following ```SingleR``` line;
+```
+test.anno<-SingleR(test = sce.na, ref = sce.new.noNa, labels = sce.new.noNa$Level3M, de.method = "wilcox", BPPARAM = bp)
+```
 
 
 
