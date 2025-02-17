@@ -301,7 +301,25 @@ altExpNames(0):
 Now, ```sce.new.Nona``` can be used as a cell annotation ref in the following ```SingleR``` line;
 ```
 test.anno<-SingleR(test = sce.na, ref = sce.new.noNa, labels = sce.new.noNa$Level3M, de.method = "wilcox", BPPARAM = bp)
+
+> test.anno
+DataFrame with 11992 rows and 4 columns
+                                             scores               labels delta.next        pruned.labels
+                                           <matrix>          <character>  <numeric>          <character>
+AAACCCACAAGAGCTG-1_1 0.619861:0.522636:0.559956:...  Pro-B-Early-cycling  0.0103239  Pro-B-Early-cycling
+AAACCCACAATACCTG-1_1 0.627356:0.457270:0.488370:... Non-Classical Mono-2  0.0046618 Non-Classical Mono-2
+AAACCCACAATGACCT-1_1 0.500082:0.528694:0.519670:...              CD4 TCM  0.5000000              CD4 TCM
+AAACCCACATATGAAG-1_1 0.571480:0.455628:0.495637:...                ERP-1  0.0367698                ERP-1
+AAACGAAAGATGATTG-1_1 0.451752:0.485347:0.467022:...              CD4 TCM  0.1366315              CD4 TCM
+...                                             ...                  ...        ...                  ...
+TTTGACTCACCTCAGG-1_8 0.719211:0.595060:0.612476:...               preNeu  0.0608543               preNeu
+TTTGATCAGAGCATCG-1_8 0.619406:0.487443:0.519369:...                ERP-1  0.0989105                ERP-1
+TTTGGAGCACAAAGTA-1_8 0.317110:0.291358:0.292281:...                ERP-1  0.1757876                ERP-1
+TTTGGTTCAGCTCGGT-1_8 0.584948:0.569715:0.581807:...              Pro-B-2  0.0170131              Pro-B-2
+TTTGTTGTCAGGACAG-1_8 0.661664:0.481814:0.528799:...               preNeu  0.4845118               preNeu
 ```
+
+
 
 
 
