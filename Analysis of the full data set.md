@@ -318,8 +318,67 @@ TTTGGAGCACAAAGTA-1_8 0.317110:0.291358:0.292281:...                ERP-1  0.1757
 TTTGGTTCAGCTCGGT-1_8 0.584948:0.569715:0.581807:...              Pro-B-2  0.0170131              Pro-B-2
 TTTGTTGTCAGGACAG-1_8 0.661664:0.481814:0.528799:...               preNeu  0.4845118               preNeu
 ```
+So far so good but unfortunately, life is not that easy.  ```SingleR``` generates ```pruned.labels``` as a result of fine tuning labels based on the difference between median delta of all the labels and predicted label.  If the differential delta is below the minmum threashold (nmad=3), pruned.labels become ```NA```, meaning the lable becomes too ambiguous beyond statistical certainty.  
+```
+> test.anno[is.na(test.anno$pruned.labels), ]
+DataFrame with 521 rows and 4 columns
+                                             scores          labels  delta.next pruned.labels
+                                           <matrix>     <character>   <numeric>   <character>
+AAACGAAGTCTGTAAC-1_1 0.581359:0.458218:0.479427:...           ERP-5  0.00179813            NA
+AACCACACAAGAGGCT-1_1 0.481755:0.382709:0.388356:...             pDC  0.06275453            NA
+AACCATGCATGGGTTT-1_1 0.509447:0.424404:0.437486:...            cMOP  0.00487133            NA
+AAGACTCTCCCAGCGA-1_1 0.404998:0.347738:0.352620:... Pro-B-cycling-1  0.00158392            NA
+AAGGTAAGTGGAGAAA-1_1 0.372966:0.363028:0.349019:...     MK-Platelet  0.00131745            NA
+...                                             ...             ...         ...           ...
+TCTGGCTTCTTCTGGC-1_8 0.302449:0.285471:0.288033:...      Multilin-1 0.001813977            NA
+TGTGAGTAGGAGGCAG-1_8 0.460082:0.425046:0.430202:...      Multilin-1 0.000138793            NA
+TTCTTCCTCTTTCTTC-1_8 0.286098:0.242432:0.243278:...      Multilin-2 0.005616341            NA
+TTGACCCAGGTCCCGT-1_8 0.369357:0.374633:0.365590:...         Pro-B-1 0.001691126            NA
+TTTCACACAACCTATG-1_8 0.414553:0.410077:0.403721:...             CLP 0.277076760            NA
+```
 
-
+There are at least two relatively easy ways to deal with ```NA``` purned labels.  One is to completely ignore it and use whatever the corresponding ```label``` says.  Another is to reassgin these cells with ```NA``` by using other cell annotation dataset or rerun ```SingleR``` again with the ref data set.  The former was done by using ```Novershtern hematopoietic data (The Novershtern reference (previously known as Differentiation Map) consists of microarray datasets for sorted hematopoietic cell populations from GSE24759 (Novershtern et al. 2011).)``` in ```celldex``` package as follows;
+```
+library(celldex)
+ref <- fetchReference("novershtern_hematopoietic", "2024-02-26")
+test.anno.Novershtern<-SingleR(test = sce.na.2, ref = ref, labels = ref$label.fine, de.method = "wilcox")
+> test.anno.Novershtern
+DataFrame with 521 rows and 4 columns
+                                             scores                 labels  delta.next          pruned.labels
+                                           <matrix>            <character>   <numeric>            <character>
+AAACGAAGTCTGTAAC-1_1 0.431902:0.442332:0.440034:... Colony Forming Unit-..  0.00000000 Colony Forming Unit-..
+AACCACACAAGAGGCT-1_1 0.364079:0.385643:0.390057:... Mature B cells class..  0.00100705 Mature B cells class..
+AACCATGCATGGGTTT-1_1 0.362696:0.346058:0.348330:... Common myeloid proge..  0.00114818 Common myeloid proge..
+AAGACTCTCCCAGCGA-1_1 0.341718:0.340133:0.344922:...          Naive B cells  0.01329149          Naive B cells
+AAGGTAAGTGGAGAAA-1_1 0.232989:0.244931:0.253105:...   CD4+ Effector Memory  0.00113773   CD4+ Effector Memory
+...                                             ...                    ...         ...                    ...
+TCTGGCTTCTTCTGGC-1_8 0.242030:0.239319:0.241809:... Mature NK cells_CD56.. 0.000707935 Mature NK cells_CD56..
+TGTGAGTAGGAGGCAG-1_8 0.270087:0.283287:0.283008:...          Naive B cells 0.006433359          Naive B cells
+TTCTTCCTCTTTCTTC-1_8 0.202896:0.203365:0.206822:... Erythroid_CD34+ CD71.. 0.001745979 Erythroid_CD34+ CD71..
+TTGACCCAGGTCCCGT-1_8 0.281988:0.273521:0.273203:... Mature B cells class.. 0.001998644 Mature B cells class..
+TTTCACACAACCTATG-1_8 0.278295:0.286054:0.286874:...          Naive B cells 0.007531319          Naive B cells
+> is.na(test.anno.Novershtern$pruned.labels) %>% sum()
+[1] 1
+```
+There was an only one NA by this approach but as you can see, ```labels``` are not as detailed and nomeclatures are significantly off in comparison, which is no surprise since ```the Novershtern hematopoietic data``` was collected back in 2011 and there has been a tremendous improvement in phenotypic identification of human hematopoietic cells   The latter generated 12 NAs, down from 521 and ```labels and pruned labels``` were not altered at all;
+```
+> test.anno.2
+DataFrame with 521 rows and 4 columns
+                                             scores          labels  delta.next   pruned.labels
+                                           <matrix>     <character>   <numeric>     <character>
+AAACGAAGTCTGTAAC-1_1 0.581359:0.458218:0.479427:...           ERP-5  0.00179813           ERP-5
+AACCACACAAGAGGCT-1_1 0.481755:0.382709:0.388356:...             pDC  0.06275453             pDC
+AACCATGCATGGGTTT-1_1 0.509447:0.424404:0.437486:...            cMOP  0.00487133            cMOP
+AAGACTCTCCCAGCGA-1_1 0.404998:0.347738:0.352620:... Pro-B-cycling-1  0.00158392 Pro-B-cycling-1
+AAGGTAAGTGGAGAAA-1_1 0.372966:0.363028:0.349019:...     MK-Platelet  0.00131745     MK-Platelet
+...                                             ...             ...         ...             ...
+TCTGGCTTCTTCTGGC-1_8 0.302449:0.285471:0.288033:...      Multilin-1 0.001813977      Multilin-1
+TGTGAGTAGGAGGCAG-1_8 0.460082:0.425046:0.430202:...      Multilin-1 0.000138793      Multilin-1
+TTCTTCCTCTTTCTTC-1_8 0.286098:0.242432:0.243278:...      Multilin-2 0.005616341      Multilin-2
+TTGACCCAGGTCCCGT-1_8 0.369357:0.374633:0.365590:...         Pro-B-1 0.001691126         Pro-B-1
+TTTCACACAACCTATG-1_8 0.414553:0.410077:0.403721:...             CLP 0.277076760             CLP
+```
+This latter apporach must be understood cautiously.  Since ```SingleR``` uses ```median absolute deviation``` to set a threshold for ```NA```, the latter approach just picked up the ones that deviate from the median of the new distribuion based on the same undervalued ```deltas``` as in the previous case as ```NAs```.  This simply means no significant staistical imporevment over the ones that the previously detemined ```NAs```.  
 
 
 
