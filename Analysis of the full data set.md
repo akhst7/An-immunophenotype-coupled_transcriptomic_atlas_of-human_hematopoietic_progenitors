@@ -378,7 +378,12 @@ TTCTTCCTCTTTCTTC-1_8 0.286098:0.242432:0.243278:...      Multilin-2 0.005616341 
 TTGACCCAGGTCCCGT-1_8 0.369357:0.374633:0.365590:...         Pro-B-1 0.001691126         Pro-B-1
 TTTCACACAACCTATG-1_8 0.414553:0.410077:0.403721:...             CLP 0.277076760             CLP
 ```
-This latter apporach must be understood cautiously.  Since ```SingleR``` uses ```median absolute deviation``` to set a threshold for ```NA```, the latter approach just picked up the ones that deviate from the median of the new distribuion based on the same undervalued ```deltas``` as in the previous case as ```NAs```.  This simply means no significant staistical imporevment over the ones that the previously detemined ```NAs```.  
+This latter apporach must be understood cautiously.  Since ```SingleR``` uses ```median absolute deviation``` to set a threshold for ```NA```, the latter approach just picked up the ones that deviate from the median of the new distribuion based on the same undervalued ```deltas``` as in the previous case as ```NAs```.  This simply means that the latter approch did not achieve significant staistical imporevment over the ones that the previously detemined```NAs```.  Perhaps, other annotatioin package with modern ML traiing may perform better assigning clear annotations to these ambiguous calls. 
+A following is a ```DimPlot``` of this data set showing where NA cells are.
+![Position of 512 Annotation NA Cells on the UMAP](https://github.com/user-attachments/assets/1ddbc2e8-2993-4213-872e-ea61b10a9440)
+
+The ```Dimplot``` with a full annotation (including ambiguous calls) looks as follows;
+![Projection of Complete Cell Annotation over the Integrated Umap](https://github.com/user-attachments/assets/a5b8e5b2-ad5b-4043-a2fb-ad77a19ec0bd)
 
 
 
