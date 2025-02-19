@@ -1,4 +1,4 @@
-# Analysis of Combined CD34 and CD271 Samples 
+[Untitled.csv](https://github.com/user-attachments/files/18870111/Untitled.csv)# Analysis of Combined CD34 and CD271 Samples 
 ## 1. Strategies for merging CD34 and CD271 Samples
 Merging multiple ```Seurat files``` can be simply done by invoking ```merge``` command, however, this does not mean that any ```Seurat files``` can be merged easily.  For example, merging a seperate  ```CD34 Seurat file``` and ```CD271 Seurat file``` completed for preprocessing and analysis,  into a combined file does not work.  A process of untangling S3 structure of the multiple Seurat files with many slots gets too complicated to stich togher.  The best way to do this is to go from the beginning; simply importing various raw h5 files again and create a single Seruat object containing all the raw sample data. It could be an extremely large object but if BPCells or other means, the obj should be manageble in the local computer with sufficient memory for bioinformatics.  Or else, a big object like this may be better handled in the cloud.  
 
@@ -76,6 +76,11 @@ Let's look at UMAP created by this.
 
 By looking at this overaly of all the sample onto the same UMAP space, ```Harmony``` worked really well.  A following plot shows the same integrated UMAP but with projection of cell annotation (86 distinct cell types).   
 ![Rplot01](https://github.com/user-attachments/assets/63f095ad-c968-46b3-8c89-e97c65e800f3)
+
+A following table shows how each subsets are phenotypically defined.  
+
+![Screenshot 2025-02-19 at 10 29 42 AM](https://github.com/user-attachments/assets/7cbadb32-dd19-46b2-8087-5e7854e1532b)
+
 
 Of note, there are 11992 cells with no annotations (NA in the legend). 
 
