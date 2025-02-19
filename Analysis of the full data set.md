@@ -206,7 +206,7 @@ All the files necessary to create either a ```Seurat``` or ```Scanpy/Scvelo```, 
 
 One might argue that rather than realigning fastqs from the individual sample, which requires multiple Solo runs,  concatenating all the fastqs and run Solo in a single run. However, an issue of doing this is that some of the same barcodes were used repeatedly in several samples thereby, fastqs with the same bar code yet from different samples will be counted as the same.  The only way this woud work is if @RG has the SM (group) which can be used to distinguish samples in BAM files.  
 
-Actual sequence of the RNA velocity analysis will be covered in another more dedicated git page for the RNA velometry and psuedotime analysis. 
+Actual sequence of the RNA velocity analysis will be covered in another more dedicated git page particulary for the RNA velometry and psuedotime analysis. 
 
 ## Establishing the scRNAseq Cell Annotation Ref for the Human Hematopoietic Tissue
 This dataset comes with cell annotations based on the ADT(CITE-Seq) and transcriptomic data, then why further cell annotation step is necessary? It turns out that only **11992** cells out of 67889 (in this example buy a lot more in the actual published data) are annotated.  These unannotated cells could be annotated by using annotated 67889 cell as a training set for annotating the test set, 11992 unannotated cells.  This actually gives a great opportunity to test how well an annotation algorithm performs.  
