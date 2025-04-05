@@ -175,7 +175,7 @@ r8=/Volumes/Bioinformatics/temp/SRR26369698_2.fastq.gz
 STAR --genomeDir $index \
 --runThreadN 50 \
 --readFilesCommand 'pigz -c -d' \
---readFilesIn $r2,$r4,$6,$8 $r1,$r3,$5,$7 \
+--readFilesIn $r2,$r4,$r6,$r8 $r1,$r3,$r5,$r7 \
 --soloCBwhitelist $whitelist \
 --soloType CB_UMI_Simple \
 --soloCBstart 1 \
