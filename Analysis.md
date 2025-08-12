@@ -135,7 +135,7 @@ Actual doublets counts among all the clusters indeed shows the cluster 25 has th
   34      90      20
   35      74       2
 ```
-These does not quite help deciding whether all the doublets should be removed or any doublets could be saved.  One factor that might augment the decisiion potentially is a differential gene expression of the doublets against singlets.  This might reveal the cellular nature of the doublets, for example, if a large portion of top DGEs are MT origin or Ribosome associated genes, these cells should well be removed.  DGEs of doublets relative to singles could be easily done in ```Seurat```;
+These do not quite help deciding whether all the doublets should be removed or any doublets could be saved.  One factor that might augment the decisiion potentially is a differential gene expression of the doublets against singlets.  This might reveal the cellular nature of the doublets, for example, if a large portion of top DGEs are MT origin or Ribosome associated genes, these cells should well be removed.  DGEs of doublets relative to singles could be easily done in ```Seurat```;
 ```
 FindMarkers(j, ident.1 = doublet.name, assay = "RNA", logfc.threashold=0.5, test.use="wilcox", group.by = "group") %>% as.data.table(., keep.rowname=T) ->de.dt
 
